@@ -35,30 +35,30 @@ type content struct {
 }
 
 func main() {
-	filename := flag.String("f", "", "Markdown file to preview")
+	fileName := flag.String("f", "", "Markdown file to preview")
 	skipPreview := flag.Bool("s", false, "Skip auto-preview")
 	tFname := flag.String("t", "", "Alternate template name")
 	browser := flag.String("b", "firefox", "Browser to preview in")
 	flag.Parse()
 
-	if *filename == "" {
+	if *fileName == "" {
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	if err := run(*filename, *tFname, os.Stdout, *skipPreview, *browser); err != nil {
+	if err := run(*fileName, *tFname, os.Stdout, *skipPreview, *browser); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func run(filename string, tFname string, out io.Writer, skipPreview bool, browser string) error {
-	input, err := ioutil.ReadFile(filename)
+func run(fileName string, tFname string, out io.Writer, skipPreview bool, browser string) error {
+	input, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		return err
 	}
 
-	htmlData, err := parseContent(input, tFname)
+	htmlData, err := parseContent(input, tFname, fileName)
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func run(filename string, tFname string, out io.Writer, skipPreview bool, browse
 	return preview(outName, browser)
 }
 
-func parseContent(input []byte, tFname string) ([]byte, error) {
+func parseContent(input []byte, tFname string, fileName string) ([]byte, error) {
 	output := blackfriday.Run(input)
 	body := bluemonday.UGCPolicy().SanitizeBytes(output)
 
@@ -105,7 +105,7 @@ func parseContent(input []byte, tFname string) ([]byte, error) {
 	}
 
 	c := content{
-		Title: "Markdown Preview Tool",
+		Title: fmt.Sprintf("Markdown Preview | %s", fileName),
 		Body:  template.HTML(body),
 	}
 

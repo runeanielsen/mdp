@@ -20,7 +20,7 @@ func TestParseContent(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result, err := parseContent(input, "")
+	result, err := parseContent(input, "", inputFile)
 	if err != nil {
 		t.Fatal(err)
 	}
