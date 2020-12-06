@@ -35,6 +35,7 @@ type content struct {
 }
 
 func main() {
+
 	fileName := flag.String("f", "", "Markdown file to preview")
 	skipPreview := flag.Bool("s", false, "Skip auto-preview")
 	tFname := flag.String("t", "", "Alternate template name")
@@ -58,7 +59,16 @@ func run(fileName string, tFname string, out io.Writer, skipPreview bool, browse
 		return err
 	}
 
-	htmlData, err := parseContent(input, tFname, fileName)
+	template := defaultTemplate
+	if os.Getenv("MDP_TEMPLATE_PATH") != "" {
+		envTemplate, err := ioutil.ReadFile(os.Getenv("MDP_TEMPLATE_PATH"))
+		if err != nil {
+			return err
+		}
+		template = string(envTemplate)
+	}
+
+	htmlData, err := parseContent(input, tFname, fileName, template)
 	if err != nil {
 		return err
 	}
@@ -88,11 +98,11 @@ func run(fileName string, tFname string, out io.Writer, skipPreview bool, browse
 	return preview(outName, browser)
 }
 
-func parseContent(input []byte, tFname string, fileName string) ([]byte, error) {
+func parseContent(input []byte, tFname string, fileName string, htmlTemplate string) ([]byte, error) {
 	output := blackfriday.Run(input)
 	body := bluemonday.UGCPolicy().SanitizeBytes(output)
 
-	t, err := template.New("mdp").Parse(defaultTemplate)
+	t, err := template.New("mdp").Parse(htmlTemplate)
 	if err != nil {
 		return nil, err
 	}
