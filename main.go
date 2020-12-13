@@ -35,7 +35,6 @@ type content struct {
 }
 
 func main() {
-
 	fileName := flag.String("f", "", "Markdown file to preview")
 	skipPreview := flag.Bool("s", false, "Skip auto-preview")
 	tFname := flag.String("t", "", "Alternate template name")
