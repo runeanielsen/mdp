@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	inputFile  = "./testdata/test1.md"
-	resultFile = "test1.md.html"
-	goldenFile = "./testdata/test1.md.html"
+	inputFile  = "./testdata/test.md"
+	resultFile = "test.md.html"
+	goldenFile = "./testdata/test.md.html"
 )
 
 func TestParseContent(t *testing.T) {
