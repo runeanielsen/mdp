@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 FHASH=`md5sum $1`
 while true; do
